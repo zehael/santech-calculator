@@ -1,17 +1,32 @@
 import { createStore } from "vuex";
+import { ICalcItem } from "@/types/Calc";
+import DataService from "@/services/data-service";
+import { ICalcResult } from "@/types/CalcResult";
+
+const dataService = new DataService();
 
 export default createStore({
   state: {
-    total: 0,
+    calcItems: [] as ICalcItem[],
+    calcResult: null as ICalcResult | null,
   },
   getters: {
-    total: (s) => s.total,
+    calcItems: (s) => s.calcItems,
+    calcResult: (s) => s.calcResult,
   },
   mutations: {
-    SET_TOTAL(state, payload: number) {
-      state.total = payload;
+    SET_CALC_ITEMS(state, payload: ICalcItem[]) {
+      state.calcItems = payload;
+    },
+    SET_CALC_RESULT(state, payload: ICalcResult) {
+      state.calcResult = payload;
     },
   },
-  actions: {},
+  actions: {
+    fetchCalcItems({ commit }) {
+      const items = dataService.fetchCalcItems();
+      commit("SET_CALC_ITEMS", items);
+    },
+  },
   modules: {},
 });

@@ -21,3 +21,9 @@ export enum Measure {
   MP = "м.п.",
   PCS = "шт",
 }
+
+export interface ICalcInputValueItem {
+  id: number;
+  name: string;
+  amount: number;
+}

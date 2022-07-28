@@ -27,13 +27,11 @@ export default defineComponent({
     const { defineAmount } = useCalc(calcItem.value);
 
     onMounted(() => {
-      console.log("calc item is", calcItem.value?.max);
       createMarks();
     });
 
     watch(sliderValue, (value) => {
-      const amount = defineAmount(value);
-      console.log("amount for sliderValue", amount);
+      defineAmount(value);
     });
 
     const createMarks = () => {
@@ -45,7 +43,6 @@ export default defineComponent({
         markItem[i] = `${i} ${calcItem.value?.measure}`;
       }
       marks.value = markItem;
-      console.log("marks is", JSON.stringify(markItem));
     };
 
     const formatter = (value: number) => {

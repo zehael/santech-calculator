@@ -1,6 +1,7 @@
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, toRefs, watch } from "vue";
 import { ICalcItem } from "@/types/Calc";
+import useCalc from "@/hooks/useCalc";
 
 export default defineComponent({
   props: {
@@ -8,9 +9,25 @@ export default defineComponent({
       type: Object as () => ICalcItem,
     },
   },
-  setup() {
+  setup(props) {
+    const { calcItem } = toRefs(props);
     const calcInputValue = ref<boolean>(false);
     const qty = ref<number>(1);
+    const { defineAmount, removeItemFromResult } = useCalc(calcItem.value);
+    watch(calcInputValue, (value) => {
+      if (calcInputValue.value === false) {
+        removeItemFromResult();
+        return;
+      }
+      if (value) {
+        defineAmount(qty.value);
+      }
+    });
+    watch(qty, (value) => {
+      if (calcInputValue.value && value) {
+        defineAmount(value);
+      }
+    });
     return {
       calcInputValue,
       qty,

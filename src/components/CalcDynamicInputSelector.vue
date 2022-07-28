@@ -1,16 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, toRefs, watch } from "vue";
-import { ICalcItem } from "@/types/Calc";
+import { ICalcInputValueItem, ICalcItem } from "@/types/Calc";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import useCalc from "@/hooks/useCalc";
 
 interface Option {
   value: string;
-}
-
-interface CalcInputValueItem {
-  id: number;
-  name: string;
-  amount: number;
 }
 
 export default defineComponent({
@@ -26,7 +21,8 @@ export default defineComponent({
   setup(props) {
     const { calcItem } = toRefs(props);
     const calcInputValue = ref("");
-    const calcInputValueItems = ref<CalcInputValueItem[]>([]);
+    const calcInputValueItems = ref<ICalcInputValueItem[]>([]);
+    const { defineAmountByDynamicInputValues } = useCalc(calcItem.value);
 
     const options = ref<Option[]>([
       { value: "Раковина" },
@@ -37,7 +33,7 @@ export default defineComponent({
     ]);
 
     watch(calcInputValueItems, () => {
-      calcSumAmountByDynamicItems();
+      defineAmountByDynamicInputValues(calcInputValueItems.value);
     });
 
     const addItem = () => {
@@ -75,17 +71,6 @@ export default defineComponent({
       return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
     };
 
-    const calcSumAmountByDynamicItems = () => {
-      const clearedItems = calcInputValueItems.value.filter(
-        (item) => item.name !== ""
-      );
-      const itemLenght = calcItem.value?.prices[0].amount || 0;
-      const sum = parseFloat(
-        Math.floor(clearedItems.length * itemLenght).toFixed(2)
-      );
-      console.log("dynamic sum is", sum);
-    };
-
     return {
       calcInputValue,
       options,
@@ -102,18 +87,17 @@ export default defineComponent({
   <div class="calculator__item">
     <h3>{{ calcItem?.title }}</h3>
     <a-row class="calculator__row calculator__row--small">
-      <a-col class="calculator__col" :span="24">
-        <a-space
-          v-for="item in calcInputValueItems"
-          :key="item.id"
-          style="display: flex; margin-bottom: 8px"
-          align="baseline"
-        >
+      <a-col
+        v-for="item in calcInputValueItems"
+        :key="item.id"
+        class="calculator__col"
+        :span="24"
+      >
+        <a-space style="width: 100%" align="baseline">
           <a-form-item>
             <a-auto-complete
               @change="(value: string) => onItemValueChange(value, item.id)"
               :options="options"
-              style="width: 100%"
               placeholder="Стир. / Посудомоечная машина, сан-узел и т.д."
               :filter-option="filterOption"
             >
@@ -124,6 +108,8 @@ export default defineComponent({
           </a-form-item>
           <MinusCircleOutlined @click="removeItem(item.id)" />
         </a-space>
+      </a-col>
+      <a-col :span="24">
         <a-form-item>
           <a-button type="dashed" block @click="addItem">
             <PlusOutlined />
@@ -134,8 +120,3 @@ export default defineComponent({
     </a-row>
   </div>
 </template>
-<style lang="less" scoped>
-.ant-space-item {
-  width: 100% !important;
-}
-</style>

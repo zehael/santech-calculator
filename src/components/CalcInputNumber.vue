@@ -14,8 +14,7 @@ export default defineComponent({
     const { defineAmount } = useCalc(calcItem.value);
     const calcInputValue = ref<number>(0);
     watch(calcInputValue, (value) => {
-      const amount = defineAmount(value);
-      console.log("amount for sliderValue", amount);
+      defineAmount(value);
     });
     return {
       calcInputValue,

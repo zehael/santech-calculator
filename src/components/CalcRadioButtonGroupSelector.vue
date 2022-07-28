@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, toRefs, watch } from "vue";
 import { ICalcItem } from "@/types/Calc";
+import useCalc from "@/hooks/useCalc";
 
 export default defineComponent({
   props: {
@@ -17,6 +18,7 @@ export default defineComponent({
       height: "30px",
       lineHeight: "30px",
     });
+    const { defineAmountWithSelectPriceAndQty } = useCalc(calcItem.value);
 
     watch(calcInputValue, () => {
       getSumByQuantity();
@@ -27,13 +29,7 @@ export default defineComponent({
     });
 
     const getSumByQuantity = () => {
-      const priceItem = calcItem.value?.prices?.find(
-        (item) => item.id === calcInputValue.value
-      );
-      if (priceItem) {
-        const sum = parseFloat((priceItem.amount * qty.value).toFixed(2));
-        console.log("sum is", sum);
-      }
+      defineAmountWithSelectPriceAndQty(qty.value, calcInputValue.value);
     };
 
     return {
