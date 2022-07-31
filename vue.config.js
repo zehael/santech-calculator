@@ -12,6 +12,9 @@ module.exports = defineConfig({
           },
           javascriptEnabled: true,
         },
+        additionalData: `
+          @import "@/styles/vars.less";
+        `,
       },
     },
   },

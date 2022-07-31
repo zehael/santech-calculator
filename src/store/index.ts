@@ -10,11 +10,13 @@ export default createStore({
     calcItems: [] as ICalcItem[],
     calcResult: null as ICalcResult | null,
     markups: [] as IMarkup[],
+    resultLoading: false,
   },
   getters: {
     calcItems: (s) => s.calcItems,
     calcResult: (s) => s.calcResult,
     markups: (s) => s.markups,
+    resultLoading: (s) => s.resultLoading,
   },
   mutations: {
     SET_CALC_ITEMS(state, payload: ICalcItem[]) {
@@ -25,6 +27,9 @@ export default createStore({
     },
     SET_MARKUPS(state, payload: IMarkup[]) {
       state.markups = payload;
+    },
+    SET_RESULT_LOADING(state, payload: boolean) {
+      state.resultLoading = payload;
     },
   },
   actions: {
