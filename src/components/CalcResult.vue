@@ -2,8 +2,10 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { ICalcResult } from "@/types/CalcResult";
+import CalcResultItem from "@/components/CalcResultItem.vue";
 
 export default defineComponent({
+  components: { CalcResultItem },
   setup() {
     const store = useStore();
     const calcResult = computed<ICalcResult | null>(
@@ -37,50 +39,33 @@ export default defineComponent({
 <template>
   <div class="result">
     <div class="result__action">
-      <a-button @click="displayResult" type="primary" size="large"
-        >Рассчет стоимости
+      <a-button @click="displayResult" type="primary" size="large">
+        Рассчет стоимости
       </a-button>
     </div>
     <div v-if="calcResult && showResultData" class="result__info">
-      <a-row
-        class="result__item"
-        v-for="item in calcResult.items"
-        :key="item.calcItem?.id"
-      >
-        <a-col span="16">
-          {{ item.calcItem.title }}
-        </a-col>
-        <a-col span="8">
-          <div class="result__amount">
-            {{
-              item.totalAmount?.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-            }}
-            Руб.
-          </div>
-        </a-col>
-      </a-row>
+      <div v-for="item in calcResult.items" :key="item.calcItem?.id">
+        <CalcResultItem :calc-result-item="item" />
+        <a-divider />
+      </div>
       <div id="total" class="result__total">
         <span>Итого:</span>
-        <span
-          ><strong
-            >{{
+        <span>
+          <strong>
+            {{
               calcResult.totalSum
                 .toFixed(0)
                 .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
             }}
-            Руб</strong
-          ></span
-        >
+            Руб
+          </strong>
+        </span>
       </div>
     </div>
   </div>
 </template>
 <style lang="less" scoped>
 .result {
-  &__item {
-    margin-bottom: 20px;
-  }
-
   &__action {
     margin: 40px 0 25px;
     display: flex;
@@ -94,12 +79,6 @@ export default defineComponent({
     margin: 16px 0;
     padding: 25px;
     font-size: 16px;
-  }
-
-  &__amount {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
   }
 
   &__total {

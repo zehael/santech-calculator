@@ -13,7 +13,12 @@ export default function useCalc(calcItem: ICalcItem | undefined) {
   const defineAmount = (value: number, qty?: number): number => {
     if (!calcItem || !value) return 0;
     const totalSumOfCalcItem = getSumByPriceList(calcItem.prices, value);
-    updateStoredResult(totalSumOfCalcItem, undefined, undefined, qty);
+    const inputValueItem: ICalcInputValueItem = {
+      id: 1,
+      name: `${value} ${calcItem?.measure}`.trim(),
+      amount: totalSumOfCalcItem,
+    };
+    updateStoredResult(totalSumOfCalcItem, undefined, [inputValueItem], qty);
     return totalSumOfCalcItem;
   };
 

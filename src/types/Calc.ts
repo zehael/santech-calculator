@@ -6,6 +6,7 @@ export interface ICalcItem {
   min?: number;
   max?: number;
   step?: number;
+  marks?: number[];
   measure?: Measure;
 }
 

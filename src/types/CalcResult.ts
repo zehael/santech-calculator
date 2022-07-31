@@ -37,3 +37,9 @@ export class CalcResultItem {
     }
   }
 }
+
+export interface IMarkup {
+  id: number;
+  amount: number;
+  description?: string;
+}

@@ -38,11 +38,19 @@ export default defineComponent({
       const min = calcItem?.value?.min || 0;
       const max = calcItem.value?.max || 0;
       const step = calcItem.value?.step || 1;
-      let markItem: any = {};
-      for (let i = max; i >= min; i = i - step) {
-        markItem[i] = `${i} ${calcItem.value?.measure}`;
+      let marksObject: any = {};
+      if (!calcItem.value?.marks) {
+        for (let i = max; i >= min; i = i - step) {
+          marksObject[i] = `${i} ${calcItem.value?.measure}`;
+        }
       }
-      marks.value = markItem;
+
+      if (calcItem.value?.marks?.length) {
+        calcItem.value.marks.forEach((markNum) => {
+          marksObject[markNum] = `${markNum} ${calcItem.value?.measure}`.trim();
+        });
+      }
+      marks.value = marksObject;
     };
 
     const formatter = (value: number) => {

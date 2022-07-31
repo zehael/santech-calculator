@@ -25,11 +25,14 @@ export default defineComponent({
     const { defineAmountByDynamicInputValues } = useCalc(calcItem.value);
 
     const options = ref<Option[]>([
+      { value: "Кухонная Мойка" },
+      { value: "Посудомоечная машина" },
+      { value: "Унитаз" },
       { value: "Раковина" },
       { value: "Стиральная машина" },
-      { value: "Посудомоечная машина" },
-      { value: "Душ" },
-      { value: "Сан узел" },
+      { value: "Гигиенический Душ" },
+      { value: "Ванна" },
+      { value: "Душевая" },
     ]);
 
     watch(calcInputValueItems, () => {

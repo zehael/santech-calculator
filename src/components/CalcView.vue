@@ -23,6 +23,7 @@ export default defineComponent({
     const calcItems = computed<ICalcItem[]>(() => store.getters.calcItems);
     onMounted(() => {
       store.dispatch("fetchCalcItems");
+      store.dispatch("fetchMarkups");
     });
     return {
       calcItems,
@@ -43,6 +44,8 @@ export default defineComponent({
     <CalcSwitchSelector :calc-item="calcItems[8]" />
     <CalcSwitchSelector :calc-item="calcItems[9]" />
     <CalcSwitchSelector :calc-item="calcItems[10]" />
+    <CalcSwitchSelector :calc-item="calcItems[11]" />
+    <CalcSwitchSelector :calc-item="calcItems[12]" />
     <CalcResult />
   </div>
 </template>

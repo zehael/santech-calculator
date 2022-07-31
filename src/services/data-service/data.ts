@@ -1,14 +1,16 @@
 import { ICalcItem, Measure } from "@/types/Calc";
+import { IMarkup } from "@/types/CalcResult";
 
 export const calcItems: ICalcItem[] = [
   {
     id: 1,
-    title: "Монтаж труб для холодной и горячей воды (монтаж + изоляция)",
+    title: "Монтаж труб для холодной и горячей воды",
     description: "Укажите метраж труб",
     min: 0,
-    max: 40,
-    step: 10,
+    max: 100,
+    step: 5,
     measure: Measure.MP,
+    marks: [0, 40, 100],
     prices: [
       {
         id: 1,
@@ -36,8 +38,9 @@ export const calcItems: ICalcItem[] = [
     title: "Монтаж труб для канализации",
     description: "Укажите метраж труб",
     min: 0,
-    max: 40,
-    step: 10,
+    max: 100,
+    step: 5,
+    marks: [0, 40, 100],
     measure: Measure.MP,
     prices: [
       {
@@ -101,7 +104,7 @@ export const calcItems: ICalcItem[] = [
   },
   {
     id: 6,
-    title: "Монтаж смесителя",
+    title: "Монтаж смесителя (ванна, раковина)",
     description: `Укажите количество`,
     min: 0,
     max: 100,
@@ -206,5 +209,47 @@ export const calcItems: ICalcItem[] = [
         valueOfMin: 1,
       },
     ],
+  },
+  {
+    id: 12,
+    title: "Монтаж инсталляции",
+    description: `Укажите количество`,
+    min: 0,
+    max: 10,
+    step: 1,
+    measure: Measure.PCS,
+    prices: [
+      {
+        id: 1,
+        label: `Фиксированно за ${Measure.PCS}`,
+        amount: 2500,
+        valueOfMin: 1,
+      },
+    ],
+  },
+  {
+    id: 13,
+    title: "Монтаж радиаторов отопления",
+    description: `Укажите количество`,
+    min: 0,
+    max: 100,
+    step: 1,
+    measure: Measure.PCS,
+    prices: [
+      {
+        id: 1,
+        label: `Фиксированно за ${Measure.PCS}`,
+        amount: 4000,
+        valueOfMin: 1,
+      },
+    ],
+  },
+];
+
+export const markups: IMarkup[] = [
+  {
+    id: 1,
+    amount: 1500,
+    description: "прочие расходы",
   },
 ];
