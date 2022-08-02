@@ -19,7 +19,7 @@ import type { FormProps } from "ant-design-vue";
 import { useStore } from "vuex";
 import { FormState } from "@/types/Form";
 import TelegramService from "@/services/telegram-service";
-import { ICalcResult } from "@/types/CalcResult";
+import { ICalcResult, IMarkup } from "@/types/CalcResult";
 
 const telegramService = new TelegramService();
 
@@ -44,6 +44,7 @@ export default defineComponent({
     const formIsLoading = computed<boolean>(() => store.getters.formIsLoading);
     const calcResult = computed<ICalcResult>(() => store.getters.calcResult);
     const formSent = computed(() => store.getters.formSent);
+    const markups = computed<IMarkup[]>(() => store.getters.markups);
     const formState: UnwrapRef<FormState> = reactive({
       phone: "",
       name: "",
@@ -73,11 +74,14 @@ export default defineComponent({
       name: [{ required: true, message: "", trigger: "change" }],
     };
 
-    const handleFinish: FormProps["onFinish"] = async (values) => {
-      console.log(values, formState);
+    const handleFinish: FormProps["onFinish"] = async () => {
       store.commit("SET_FORM_IS_LOADING", true);
       setTimeout(async () => {
-        await telegramService.sendLead(formState, calcResult.value);
+        await telegramService.sendLead(
+          formState,
+          calcResult.value,
+          markups.value
+        );
         store.commit("SET_FORM_IS_LOADING", false);
         store.commit("SET_FORM_IS_SENT", true);
       }, 500);
@@ -97,11 +101,6 @@ export default defineComponent({
       }
     });
 
-    const testMethod = async () => {
-      console.log("test");
-      phoneRef.value?.focus();
-    };
-
     return {
       formState,
       rules,
@@ -111,7 +110,6 @@ export default defineComponent({
       formIsLoading,
       handleFinish,
       handleFinishFailed,
-      testMethod,
     };
   },
 });

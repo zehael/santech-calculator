@@ -1,5 +1,5 @@
 import { messageTemplates } from "@/services/telegram-service/messageTemplates";
-import { ICalcResult } from "@/types/CalcResult";
+import { ICalcResult, IMarkup } from "@/types/CalcResult";
 
 export enum IMessageTextType {
   LEAD = "LEAD",
@@ -11,7 +11,10 @@ export default function useMessage() {
     return messageItem?.data || "";
   };
 
-  const generateResultText = (calcResult: ICalcResult): string => {
+  const generateResultText = (
+    calcResult: ICalcResult,
+    markups: IMarkup[] = []
+  ): string => {
     const resultItems: string[] = [];
     calcResult.items.forEach((item, idx) => {
       const { inputValues = [], selectedPrice } = item;
@@ -36,6 +39,19 @@ export default function useMessage() {
 
       resultItems.push(`${headLine}${content}`);
     });
+
+    if (markups.length) {
+      const headline = `<strong>Добавочная наценка:</strong>`;
+      let markupContent = "";
+      markups.forEach((markup) => {
+        markupContent += `
+    · ${markup.description} — ${markup.amount
+          .toFixed(0)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} руб.`;
+      });
+      resultItems.push(`${headline}${markupContent}`);
+    }
+
     return resultItems.join("\n\n+++++++\n\n");
   };
 

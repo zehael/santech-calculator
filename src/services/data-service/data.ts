@@ -250,6 +250,6 @@ export const markups: IMarkup[] = [
   {
     id: 1,
     amount: 1500,
-    description: "прочие расходы",
+    description: "Прочие расходы",
   },
 ];

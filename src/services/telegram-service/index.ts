@@ -3,12 +3,12 @@ import useMessage, {
   IMessageTextType,
 } from "@/services/telegram-service/useMessage";
 import { FormState } from "@/types/Form";
-import { ICalcResult } from "@/types/CalcResult";
+import { ICalcResult, IMarkup } from "@/types/CalcResult";
 
-const TOKEN = "1665007373:AAHGkGAijMl6yyvEy8ENdQAGp_9noJV2vfs";
+const TOKEN = "1015107829:AAGnWB9SDDa8Hr7yWpwVvv4jlA2UOYUto04";
 const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
 const CHAT_ID =
-  process.env.NODE_ENV === "development" ? "123080537" : "-726654847"; // -1001602757666 (chatId from group) / My: 123080537
+  process.env.NODE_ENV === "development" ? "-726654847" : "-726654847"; // -1001602757666 (chatId from group) / My: 123080537
 
 export default class TelegramService {
   private $api: AxiosInstance;
@@ -25,27 +25,31 @@ export default class TelegramService {
 
   public async sendLead(
     formData: FormState,
-    calcResult: ICalcResult
+    calcResult: ICalcResult,
+    markups: IMarkup[] = []
   ): Promise<AxiosResponse<any>> {
     const { getMessageText, generateResultText } = useMessage();
+    const totalSum = `${calcResult.totalSum
+      .toFixed(0)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} Руб.`;
     let text = getMessageText(IMessageTextType.LEAD)
       .replace(/{LEAD_NAME}/gm, formData.name)
-      .replace(/{LEAD_PHONE}/gm, formData.phone);
+      .replace(/{LEAD_PHONE}/gm, formData.phone)
+      .replace(/{LEAD_TOTAL_AMOUNT}/gm, totalSum);
 
-    const resultText = generateResultText(calcResult);
+    const resultText = generateResultText(calcResult, markups);
 
-    const today = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+    /* HASH DATA FOR GAS scripts */
+    // const today = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+    // const messageData = {
+    //   name: formData.name,
+    //   phone: formData.phone,
+    //   formData: resultText,
+    //   date: today,
+    // };
+    // const hashedData = this.toBinary(JSON.stringify(messageData));
 
-    const messageData = {
-      name: formData.name,
-      phone: formData.phone,
-      formData: resultText,
-      date: today,
-    };
-
-    const hashedData = this.toBinary(JSON.stringify(messageData));
-
-    text = `${text}\n${resultText}\n\n\nHash: <code>${btoa(hashedData)}</code>`;
+    text = `${text}\n${resultText}`;
 
     return this.sendMessage(text);
   }

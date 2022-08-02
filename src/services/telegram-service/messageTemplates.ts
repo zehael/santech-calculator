@@ -9,6 +9,8 @@ export const messageTemplates: IMessageTemplate[] = [
     data: `<strong>Заявка с калькулятора</strong> \n
 <strong>Имя: </strong> {LEAD_NAME}
 <strong>Телефон: </strong> {LEAD_PHONE}
-`,
+<strong>Сумма заказа: </strong> {LEAD_TOTAL_AMOUNT}
+
+<strong>СОСТАВ ЗАКАЗА:</strong>\n`,
   },
 ];

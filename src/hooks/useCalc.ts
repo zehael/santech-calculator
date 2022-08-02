@@ -4,12 +4,14 @@ import {
   CalcResultItem,
   ICalcResult,
   ICalcResultItem,
+  IMarkup,
 } from "@/types/CalcResult";
 import { computed } from "vue";
 
 export default function useCalc(calcItem: ICalcItem | undefined) {
   const store = useStore();
   const calcResult = computed<ICalcResult>(() => store.getters.calcResult);
+  const markups = computed<IMarkup[]>(() => store.getters.markups);
   const defineAmount = (value: number, qty?: number): number => {
     if (!calcItem || !value) return 0;
     const totalSumOfCalcItem = getSumByPriceList(calcItem.prices, value);
@@ -107,12 +109,15 @@ export default function useCalc(calcItem: ICalcItem | undefined) {
       0
     );
 
+    const markupSum: number = markups.value.reduce(
+      (acc, item) => acc + item.amount,
+      0
+    );
+
     const result: ICalcResult = {
       items: updatedResultItems,
-      totalSum,
+      totalSum: totalSum + markupSum,
     };
-
-    console.log("store result is", result);
 
     store.commit("SET_CALC_RESULT", result);
   };

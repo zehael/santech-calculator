@@ -11,4 +11,4 @@ const app = createApp(App);
 app.use(store);
 app.use(Antd);
 app.use(Maska);
-app.mount("#app");
+app.mount("#santech-calc");

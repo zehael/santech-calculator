@@ -10,6 +10,7 @@ export default createStore({
     calcItems: [] as ICalcItem[],
     calcResult: null as ICalcResult | null,
     markups: [] as IMarkup[],
+    totalMarkupPrice: 0,
     resultLoading: false,
     formIsLoading: false,
     formSent: false,
