@@ -2,12 +2,14 @@
 import { defineComponent, onMounted, ref, toRefs, watch } from "vue";
 import { ICalcItem } from "@/types/Calc";
 import useCalc from "@/hooks/useCalc";
+import { useMediaQuery } from "@vueuse/core";
 
 export default defineComponent({
   props: {
     calcItem: {
       type: Object as () => ICalcItem,
     },
+    resultIsLoading: Boolean,
   },
   setup(props) {
     const { calcItem } = toRefs(props);
@@ -24,13 +26,20 @@ export default defineComponent({
         label: "100°C",
       },
     });
-    const { defineAmount } = useCalc(calcItem.value);
+    const { defineAmount, itemInResult, removeItemFromResult } = useCalc(
+      calcItem.value
+    );
+    const isMobile = useMediaQuery("(max-width: 575px)");
 
     onMounted(() => {
       createMarks();
     });
 
     watch(sliderValue, (value) => {
+      if (!value) {
+        removeItemFromResult();
+        return;
+      }
       defineAmount(value);
     });
 
@@ -64,15 +73,41 @@ export default defineComponent({
       sliderValue,
       marks,
       formatter,
+      itemInResult,
+      isMobile,
     };
   },
 });
 </script>
 <template>
-  <div class="calculator__item">
-    <h3>{{ calcItem?.title }}</h3>
+  <a-card
+    :bordered="false"
+    :title="calcItem?.title"
+    :body-style="{ paddingLeft: '36px' }"
+    :loading="resultIsLoading"
+    :class="
+      itemInResult
+        ? 'calculator__item calculator__item--active'
+        : 'calculator__item'
+    "
+    :size="isMobile ? 'small' : 'default'"
+  >
+    <template #extra>
+      <a-avatar
+        v-if="itemInResult"
+        :size="8"
+        style="background-color: #87d068"
+        shape="circle"
+      />
+      <a-avatar
+        v-else
+        :size="8"
+        style="background-color: #d9d9d9"
+        shape="circle"
+      />
+    </template>
     <a-row class="calculator__row">
-      <a-col span="20">
+      <a-col :xs="{ span: 24 }" :md="{ span: 20 }">
         <div class="calculator__slider">
           <a-slider
             :step="calcItem.step"
@@ -85,17 +120,26 @@ export default defineComponent({
           />
         </div>
       </a-col>
-      <a-col span="4">
-        <a-input-number
-          v-model:value="sliderValue"
-          :min="calcItem.min"
-          :max="calcItem.max + 100"
-          :step="calcItem.step"
-        />
+      <a-col :xs="{ span: 24 }" :md="{ span: 4 }">
+        <a-form-item class="control__item">
+          <a-input-number
+            v-model:value="sliderValue"
+            :min="calcItem.min"
+            :max="calcItem.max + 100"
+            :step="calcItem.step"
+          />
+        </a-form-item>
       </a-col>
     </a-row>
     <div class="calculator__bottom-container">
       <span class="calculator__label">{{ calcItem?.description }}</span>
     </div>
-  </div>
+  </a-card>
 </template>
+<style lang="less" scoped>
+.control__item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+</style>

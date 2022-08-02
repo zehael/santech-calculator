@@ -1,0 +1,11 @@
+.breakpoint(tablet; @content) {
+  @media screen and (max-width: @tablet-bp) {
+    @content();
+  }
+}
+
+.breakpoint(mobile; @content) {
+  @media screen and (max-width: @mobile-bp) {
+    @content();
+  }
+}

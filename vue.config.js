@@ -14,6 +14,8 @@ module.exports = defineConfig({
         },
         additionalData: `
           @import "@/styles/vars.less";
+          @import "@/styles/mixins.less";
+          @import "@/styles/rewrites.less";
         `,
       },
     },

@@ -28,5 +28,12 @@ export default defineComponent({
   justify-content: center;
   width: 100%;
   margin: 50px 0;
+  overflow: hidden;
 }
+
+.breakpoint(mobile; {
+  .container {
+    margin: 0;
+  }
+});
 </style>

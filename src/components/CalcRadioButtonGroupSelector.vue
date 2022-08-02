@@ -2,12 +2,14 @@
 import { defineComponent, reactive, ref, toRefs, watch } from "vue";
 import { ICalcItem } from "@/types/Calc";
 import useCalc from "@/hooks/useCalc";
+import { useMediaQuery } from "@vueuse/core";
 
 export default defineComponent({
   props: {
     calcItem: {
       type: Object as () => ICalcItem,
     },
+    resultIsLoading: Boolean,
   },
   setup(props) {
     const { calcItem } = toRefs(props);
@@ -18,13 +20,26 @@ export default defineComponent({
       height: "30px",
       lineHeight: "30px",
     });
-    const { defineAmountWithSelectPriceAndQty } = useCalc(calcItem.value);
+    const {
+      defineAmountWithSelectPriceAndQty,
+      itemInResult,
+      removeItemFromResult,
+    } = useCalc(calcItem.value);
+    const isMobile = useMediaQuery("(max-width: 575px)");
 
-    watch(calcInputValue, () => {
+    watch(calcInputValue, (value) => {
+      if (!value) {
+        removeItemFromResult();
+        return;
+      }
       getSumByQuantity();
     });
 
-    watch(qty, () => {
+    watch(qty, (value) => {
+      if (!value) {
+        removeItemFromResult();
+        return;
+      }
       getSumByQuantity();
     });
 
@@ -36,15 +51,40 @@ export default defineComponent({
       radioStyle,
       calcInputValue,
       qty,
+      itemInResult,
+      isMobile,
     };
   },
 });
 </script>
 <template>
-  <div class="calculator__item">
-    <h3>{{ calcItem?.title }}</h3>
-    <a-row class="calculator__row calculator__row--small">
-      <a-col class="calculator__col" :span="10">
+  <a-card
+    :title="calcItem?.title"
+    :bodyStyle="{ marginBottom: 20 }"
+    :class="
+      itemInResult
+        ? 'calculator__item calculator__item--active'
+        : 'calculator__item'
+    "
+    :loading="resultIsLoading"
+    :size="isMobile ? 'small' : 'default'"
+  >
+    <template #extra>
+      <a-avatar
+        v-if="itemInResult"
+        :size="8"
+        style="background-color: #87d068"
+        shape="circle"
+      />
+      <a-avatar
+        v-else
+        :size="8"
+        style="background-color: #d9d9d9"
+        shape="circle"
+      />
+    </template>
+    <a-row class="calculator__row calculator__row--small calculator__row--tile">
+      <a-col class="calculator__col" :xs="{ span: 12 }" :sm="{ span: 10 }">
         <a-form-item>
           <a-radio-group v-model:value="calcInputValue">
             <a-radio
@@ -58,21 +98,18 @@ export default defineComponent({
           </a-radio-group>
         </a-form-item>
       </a-col>
-      <a-col :span="14">
-        <a-form-item
-          class="calculator__col calculator__col--right"
-          label="Количество"
-          label-align="right"
-          :label-col="{ sm: { span: 11, offset: 4 } }"
-        >
-          <a-input-number
-            v-model:value="qty"
-            :min="1"
-            :max="calcItem.max"
-            :step="calcItem.step"
-          />
-        </a-form-item>
+      <a-col :xs="{ span: 12 }" :sm="{ span: 14 }">
+        <div class="qty">
+          <a-form-item label="Количество:">
+            <a-input-number
+              v-model:value="qty"
+              :min="0"
+              :max="calcItem.max"
+              :step="calcItem.step"
+            />
+          </a-form-item>
+        </div>
       </a-col>
     </a-row>
-  </div>
+  </a-card>
 </template>

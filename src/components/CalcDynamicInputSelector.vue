@@ -3,6 +3,7 @@ import { defineComponent, ref, toRefs, watch } from "vue";
 import { ICalcInputValueItem, ICalcItem } from "@/types/Calc";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import useCalc from "@/hooks/useCalc";
+import { useMediaQuery } from "@vueuse/core";
 
 interface Option {
   value: string;
@@ -17,12 +18,18 @@ export default defineComponent({
     calcItem: {
       type: Object as () => ICalcItem,
     },
+    resultIsLoading: Boolean,
   },
   setup(props) {
     const { calcItem } = toRefs(props);
     const calcInputValue = ref("");
     const calcInputValueItems = ref<ICalcInputValueItem[]>([]);
-    const { defineAmountByDynamicInputValues } = useCalc(calcItem.value);
+    const {
+      defineAmountByDynamicInputValues,
+      itemInResult,
+      removeItemFromResult,
+    } = useCalc(calcItem.value);
+    const isMobile = useMediaQuery("(max-width: 575px)");
 
     const options = ref<Option[]>([
       { value: "Кухонная Мойка" },
@@ -35,7 +42,12 @@ export default defineComponent({
       { value: "Душевая" },
     ]);
 
-    watch(calcInputValueItems, () => {
+    watch(calcInputValueItems, (value) => {
+      const clearedItems = value.filter((item) => item.name !== "");
+      if (!clearedItems.length) {
+        removeItemFromResult();
+        return;
+      }
       defineAmountByDynamicInputValues(calcInputValueItems.value);
     });
 
@@ -78,6 +90,8 @@ export default defineComponent({
       calcInputValue,
       options,
       calcInputValueItems,
+      itemInResult,
+      isMobile,
       addItem,
       removeItem,
       onItemValueChange,
@@ -87,8 +101,26 @@ export default defineComponent({
 });
 </script>
 <template>
-  <div class="calculator__item">
-    <h3>{{ calcItem?.title }}</h3>
+  <a-card
+    :title="calcItem?.title"
+    :loading="resultIsLoading"
+    class="calculator__item"
+    :size="isMobile ? 'small' : 'default'"
+  >
+    <template #extra>
+      <a-avatar
+        v-if="itemInResult"
+        :size="8"
+        style="background-color: #87d068"
+        shape="circle"
+      />
+      <a-avatar
+        v-else
+        :size="8"
+        style="background-color: #d9d9d9"
+        shape="circle"
+      />
+    </template>
     <a-row class="calculator__row calculator__row--small">
       <a-col
         v-for="item in calcInputValueItems"
@@ -121,5 +153,5 @@ export default defineComponent({
         </a-form-item>
       </a-col>
     </a-row>
-  </div>
+  </a-card>
 </template>

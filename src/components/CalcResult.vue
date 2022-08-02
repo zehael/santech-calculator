@@ -153,4 +153,29 @@ export default defineComponent({
     }
   }
 }
+
+.breakpoint(mobile; {
+  .result {
+    max-width: initial;
+
+    &__total {
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    &__info {
+      padding: 0 10px;
+    }
+
+    &__sum {
+      margin-top: 10px;
+      align-self: center;
+    }
+
+    &__form {
+      margin-top: 10px;
+    }
+  }
+});
 </style>

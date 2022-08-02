@@ -12,11 +12,10 @@ import { PhoneOutlined, UserOutlined } from "@ant-design/icons-vue";
 import type { Rule } from "ant-design-vue/lib/form";
 import type { FormProps } from "ant-design-vue";
 import { useStore } from "vuex";
+import { FormState } from "@/types/Form";
+import TelegramService from "@/services/telegram-service";
 
-interface FormState {
-  phone: string;
-  name: string;
-}
+const telegramService = new TelegramService();
 
 export default defineComponent({
   components: {
@@ -81,8 +80,9 @@ export default defineComponent({
       }
     });
 
-    const testMethod = () => {
+    const testMethod = async () => {
       console.log("test");
+      await telegramService.sendLead(formState);
       phoneRef.value?.focus();
     };
 

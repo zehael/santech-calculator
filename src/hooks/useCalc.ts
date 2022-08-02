@@ -135,7 +135,16 @@ export default function useCalc(calcItem: ICalcItem | undefined) {
     store.commit("SET_CALC_RESULT", result);
   };
 
+  const itemInResult = computed<boolean>(() => {
+    if (!calcResult.value || !calcItem) return false;
+    const checkItem = calcResult.value.items.find(
+      (item) => item.calcItem.id === calcItem?.id
+    );
+    return checkItem !== undefined && checkItem !== null;
+  });
+
   return {
+    itemInResult,
     defineAmount,
     defineAmountWithSelectPriceAndQty,
     defineAmountByDynamicInputValues,
