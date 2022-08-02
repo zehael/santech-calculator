@@ -8,12 +8,18 @@ import {
   UnwrapRef,
   watch,
 } from "vue";
-import { PhoneOutlined, UserOutlined } from "@ant-design/icons-vue";
+import {
+  CheckCircleOutlined,
+  PhoneOutlined,
+  SyncOutlined,
+  UserOutlined,
+} from "@ant-design/icons-vue";
 import type { Rule } from "ant-design-vue/lib/form";
 import type { FormProps } from "ant-design-vue";
 import { useStore } from "vuex";
 import { FormState } from "@/types/Form";
 import TelegramService from "@/services/telegram-service";
+import { ICalcResult } from "@/types/CalcResult";
 
 const telegramService = new TelegramService();
 
@@ -21,6 +27,8 @@ export default defineComponent({
   components: {
     PhoneOutlined,
     UserOutlined,
+    SyncOutlined,
+    CheckCircleOutlined,
   },
   props: {
     showResultData: {
@@ -33,6 +41,9 @@ export default defineComponent({
     const resultIsLoading = computed<boolean>(
       () => store.getters.resultLoading
     );
+    const formIsLoading = computed<boolean>(() => store.getters.formIsLoading);
+    const calcResult = computed<ICalcResult>(() => store.getters.calcResult);
+    const formSent = computed(() => store.getters.formSent);
     const formState: UnwrapRef<FormState> = reactive({
       phone: "",
       name: "",
@@ -62,8 +73,14 @@ export default defineComponent({
       name: [{ required: true, message: "", trigger: "change" }],
     };
 
-    const handleFinish: FormProps["onFinish"] = (values) => {
+    const handleFinish: FormProps["onFinish"] = async (values) => {
       console.log(values, formState);
+      store.commit("SET_FORM_IS_LOADING", true);
+      setTimeout(async () => {
+        await telegramService.sendLead(formState, calcResult.value);
+        store.commit("SET_FORM_IS_LOADING", false);
+        store.commit("SET_FORM_IS_SENT", true);
+      }, 500);
     };
     const handleFinishFailed: FormProps["onFinishFailed"] = (errors) => {
       console.log(errors);
@@ -82,7 +99,6 @@ export default defineComponent({
 
     const testMethod = async () => {
       console.log("test");
-      await telegramService.sendLead(formState);
       phoneRef.value?.focus();
     };
 
@@ -91,6 +107,8 @@ export default defineComponent({
       rules,
       actionButtonType,
       phoneRef,
+      formSent,
+      formIsLoading,
       handleFinish,
       handleFinishFailed,
       testMethod,
@@ -108,9 +126,10 @@ export default defineComponent({
     @finishFailed="handleFinishFailed"
   >
     <a-row :gutter="[20, 0]">
-      <a-col :span="12">
+      <a-col :xs="{ span: 24 }" :sm="{ span: 12 }">
         <a-form-item label="Номер телефона:" name="phone">
           <a-input
+            :disabled="formSent"
             v-model:value="formState.phone"
             placeholder="+7 (000) 000 00 00"
             v-maska="`+7 (###) ### ## ##`"
@@ -124,9 +143,10 @@ export default defineComponent({
           </a-input>
         </a-form-item>
       </a-col>
-      <a-col :span="12">
+      <a-col :xs="{ span: 24 }" :sm="{ span: 12 }">
         <a-form-item label="Имя:" name="name">
           <a-input
+            :disabled="formSent"
             v-model:value="formState.name"
             placeholder="Иван"
             size="large"
@@ -142,14 +162,33 @@ export default defineComponent({
       <a-col :span="24">
         <div class="form__action">
           <a-form-item>
-            <a-button size="large" :type="actionButtonType" html-type="submit">
+            <a-button
+              :disabled="formSent"
+              size="large"
+              :type="actionButtonType"
+              html-type="submit"
+              :loading="formIsLoading"
+            >
               Отправить
             </a-button>
           </a-form-item>
         </div>
       </a-col>
     </a-row>
-    <a-button @click="testMethod">test</a-button>
+    <div class="form__result">
+      <a-tag v-if="formIsLoading" color="processing">
+        <template #icon>
+          <sync-outlined :spin="true" />
+        </template>
+        Отправка формы
+      </a-tag>
+      <a-tag v-if="formSent" color="success">
+        <template #icon>
+          <check-circle-outlined />
+        </template>
+        Форма успешно отправлена
+      </a-tag>
+    </div>
   </a-form>
 </template>
 <style lang="less" scoped>
@@ -161,6 +200,13 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &__result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
   }
 }
 </style>

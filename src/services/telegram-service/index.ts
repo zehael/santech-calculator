@@ -3,11 +3,12 @@ import useMessage, {
   IMessageTextType,
 } from "@/services/telegram-service/useMessage";
 import { FormState } from "@/types/Form";
+import { ICalcResult } from "@/types/CalcResult";
 
 const TOKEN = "1665007373:AAHGkGAijMl6yyvEy8ENdQAGp_9noJV2vfs";
 const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
 const CHAT_ID =
-  process.env.NODE_ENV === "development" ? "-1001602757666" : "123080537"; // -1001602757666 (chatId from group) / My: 123080537
+  process.env.NODE_ENV === "development" ? "123080537" : "-726654847"; // -1001602757666 (chatId from group) / My: 123080537
 
 export default class TelegramService {
   private $api: AxiosInstance;
@@ -22,23 +23,29 @@ export default class TelegramService {
     return this.$api.get("/getUpdates");
   }
 
-  public async sendLead(formData: FormState): Promise<AxiosResponse<any>> {
-    const { getMessageText } = useMessage();
+  public async sendLead(
+    formData: FormState,
+    calcResult: ICalcResult
+  ): Promise<AxiosResponse<any>> {
+    const { getMessageText, generateResultText } = useMessage();
     let text = getMessageText(IMessageTextType.LEAD)
       .replace(/{LEAD_NAME}/gm, formData.name)
       .replace(/{LEAD_PHONE}/gm, formData.phone);
+
+    const resultText = generateResultText(calcResult);
 
     const today = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
 
     const messageData = {
       name: formData.name,
       phone: formData.phone,
+      formData: resultText,
       date: today,
     };
 
     const hashedData = this.toBinary(JSON.stringify(messageData));
 
-    text = `${text}\nHash: ${btoa(hashedData)}`;
+    text = `${text}\n${resultText}\n\n\nHash: <code>${btoa(hashedData)}</code>`;
 
     return this.sendMessage(text);
   }

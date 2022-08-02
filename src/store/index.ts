@@ -11,12 +11,16 @@ export default createStore({
     calcResult: null as ICalcResult | null,
     markups: [] as IMarkup[],
     resultLoading: false,
+    formIsLoading: false,
+    formSent: false,
   },
   getters: {
     calcItems: (s) => s.calcItems,
     calcResult: (s) => s.calcResult,
     markups: (s) => s.markups,
     resultLoading: (s) => s.resultLoading,
+    formSent: (s) => s.formSent,
+    formIsLoading: (s) => s.formIsLoading,
   },
   mutations: {
     SET_CALC_ITEMS(state, payload: ICalcItem[]) {
@@ -30,6 +34,12 @@ export default createStore({
     },
     SET_RESULT_LOADING(state, payload: boolean) {
       state.resultLoading = payload;
+    },
+    SET_FORM_IS_SENT(state, payload: boolean) {
+      state.formSent = payload;
+    },
+    SET_FORM_IS_LOADING(state, payload: boolean) {
+      state.formIsLoading = payload;
     },
   },
   actions: {
