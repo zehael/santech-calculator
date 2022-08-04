@@ -57,7 +57,7 @@ export default defineComponent({
     </div>
     <div v-if="calcResult && showResultData" class="result__info">
       <div id="total" class="result__total">
-        <span>Рассчетная стоимость:</span>
+        <span>Расчетная стоимость:</span>
         <div class="result__sum">
           <span>≈</span>
           <h4>
@@ -106,6 +106,11 @@ export default defineComponent({
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    button {
+      color: black;
+      border-radius: 30px;
+    }
   }
 
   &__info {

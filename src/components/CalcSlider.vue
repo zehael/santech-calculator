@@ -142,4 +142,19 @@ export default defineComponent({
   align-items: center;
   justify-content: flex-end;
 }
+
+.calculator__row {
+  margin: 0;
+  margin-top: 0.5rem;
+}
+
+.calculator__label {
+  margin-top: 0.5rem;
+}
+
+.breakpoint(mobile; {
+  .calculator__row {
+    margin-top: 2rem;
+  }
+});
 </style>

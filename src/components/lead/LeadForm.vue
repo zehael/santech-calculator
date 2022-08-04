@@ -20,6 +20,7 @@ import { useStore } from "vuex";
 import { FormState } from "@/types/Form";
 import TelegramService from "@/services/telegram-service";
 import { ICalcResult, IMarkup } from "@/types/CalcResult";
+import { useMediaQuery } from "@vueuse/core";
 
 const telegramService = new TelegramService();
 
@@ -51,9 +52,10 @@ export default defineComponent({
     });
     const phoneRef = ref<HTMLInputElement>();
     const { showResultData } = toRefs(props);
+    const isMobile = useMediaQuery("(max-width: 575px)");
 
     watch(resultIsLoading, (value) => {
-      if (!value && showResultData.value === true) {
+      if (!value && showResultData.value === true && !isMobile.value) {
         phoneRef?.value?.focus();
       }
     });
