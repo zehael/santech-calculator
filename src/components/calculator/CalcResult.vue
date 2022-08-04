@@ -49,10 +49,11 @@ export default defineComponent({
       <a-button
         :loading="resultIsLoading"
         @click="displayResult"
+        shape="round"
         type="primary"
         size="large"
       >
-        Рассчет стоимости
+        Рассчитать стоимость
       </a-button>
     </div>
     <div v-if="calcResult && showResultData" class="result__info">
@@ -91,7 +92,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .result {
   max-width: @standard-width;
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
 
   &__description {
     color: @gray-color-500;
@@ -110,6 +111,7 @@ export default defineComponent({
     button {
       color: black;
       border-radius: 30px;
+      font-weight: 600;
     }
   }
 

@@ -1,13 +1,13 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
-import CalcSlider from "@/components/CalcSlider.vue";
+import CalcSlider from "@/components/calculator/CalcSlider.vue";
 import { ICalcItem } from "@/types/Calc";
-import CalcInputNumber from "@/components/CalcInputNumber.vue";
-import CalcRadioButtonGroupSelector from "@/components/CalcRadioButtonGroupSelector.vue";
-import CalcSwitchSelector from "@/components/CalcSwitchSelector.vue";
-import CalcDynamicInputSelector from "@/components/CalcDynamicInputSelector.vue";
+import CalcInputNumber from "@/components/calculator/CalcInputNumber.vue";
+import CalcRadioButtonGroupSelector from "@/components/calculator/CalcRadioButtonGroupSelector.vue";
+import CalcSwitchSelector from "@/components/calculator/CalcSwitchSelector.vue";
+import CalcDynamicInputSelector from "@/components/calculator/CalcDynamicInputSelector.vue";
 import { useStore } from "vuex";
-import CalcResult from "@/components/CalcResult.vue";
+import CalcResult from "@/components/calculator/CalcResult.vue";
 
 export default defineComponent({
   components: {
@@ -94,6 +94,10 @@ export default defineComponent({
 </template>
 <style lang="less">
 .calculator {
+  position: relative;
+  height: 100%;
+  overflow-y: scroll;
+
   &__item {
     width: 600px;
     border: 1px solid rgba(@primary-color, 48%) !important;

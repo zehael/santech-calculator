@@ -117,6 +117,7 @@ export default defineComponent({
             v-model:value="sliderValue"
             :tooltip-visible="true"
             :tip-formatter="formatter"
+            :getTooltipPopupContainer="(triggerNode) => triggerNode.parentNode"
           />
         </div>
       </a-col>

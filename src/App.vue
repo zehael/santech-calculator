@@ -1,20 +1,7 @@
+<script lang="ts"></script>
 <template>
-  <div class="container">
-    <calc-view />
-  </div>
+  <router-view />
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import CalcView from "@/components/CalcView.vue";
-
-export default defineComponent({
-  name: "App",
-  components: {
-    CalcView,
-  },
-});
-</script>
 
 <style lang="less">
 #app {
@@ -27,7 +14,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 50px 0;
+  margin: 10px 0;
   overflow: hidden;
 }
 
